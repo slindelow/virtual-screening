@@ -1,0 +1,25 @@
+You are implementing Sofia's same-day virtual screening MVP in this directory.
+
+PI context: Research Buddy orchestrates; Sofia is lab supervisor. She requires EVERY step, dataset, calculation, and analysis to be independently verifiable.
+
+Read first: README.md, DESIGN.md, CODEX_MINI_HANDOFF.md.
+
+## MUST (ship today)
+1. Install tooling with uv (install uv if missing). Python 3.12. Pin deps: pandas numpy scikit-learn rdkit-pypi pytdc (or equivalent DAVIS source). Commit uv.lock / requirements.
+2. Download/freeze DAVIS. Write data/MANIFEST.json with source URL, date (America/Toronto), SHA256 of every frozen file.
+3. configs/default.yaml: seeds, fingerprint radius/bits, binder threshold pKd>=7, split method.
+4. Train ECFP + HistGradientBoosting (or GradientBoosting) affinity regressor. Save model + config under artifacts/models/.
+5. Evaluate under (a) Murcko scaffold split and (b) cold-protein holdout. Report Spearman rho, EF@1% and EF@5% (or EF@k with k documented), AUROC. Ligand-only ablation on same splits.
+6. Write artifacts/metrics.md AND artifacts/metrics.json ONLY by exporting from the eval script (no hand-edited numbers).
+7. Commit split ID files under data/splits/.
+8. CLI: python -m src.screen (or scripts/screen.py) --target-seq STR --library path.csv --out ranked.csv using the frozen model. Include demo library 200-500 SMILES + sample ranked output in artifacts/.
+9. reproduce.sh runs freeze-check (optional redownload skip if hashes match) -> train or load -> eval -> prints metrics that match metrics.md within float tolerance documented in README.
+10. Update README status section with real metrics table from the run.
+
+## CUT
+Chemprop, Boltz-2, KIBA full, selectivity pillar, NOVA scrape, UI, Bittensor.
+
+## Done means
+reproduce.sh succeeds twice conceptually (run once thoroughly; document second-run expectation). artifacts/metrics.md exists with real numbers. screen CLI works on demo library.
+
+Start now. Do not ask Sofia questions; make reasonable choices and log them in artifacts/DECISIONS.md.
